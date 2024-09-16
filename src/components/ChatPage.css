@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f0f0f0;
+    /* background-color: #df0f0f; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -12,11 +13,10 @@ body {
 
 .chat-container {
     display: flex;
-    /* max-width: 800px; */
+    max-width: 800px;
     min-width: 800px;
     min-height: 600px;
-    /* max-height: 600px; */
-    width: auto;
+    max-height: 600px;
     margin: 20px;
     border: 1px solid #ccc;
     background-color: #fff;
@@ -104,7 +104,8 @@ body {
 #chat-messages {
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
+    overflow-y: auto;
 }
 
 .message p {

@@ -3,19 +3,19 @@ import axios from "axios";
 import React, { useState } from 'react';
 
 import { useNavigate, Link, Navigate } from "react-router-dom";
-import "./Login.css";
+import "./Register.css";
 import { Button, CircularProgress, Stack, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import Cookie from "universal-cookie";
 
 
 
-const Login = () => {
-  
-  const [authenticating, setAuthenticating] = useState(false);
+const Register = () => {
 
   const [formData, setFormData] = useState({
+    fullname: '',
     username: '',
+    email: '',
     password: ''
   })
 
@@ -26,15 +26,17 @@ const Login = () => {
     });
   };
 
+  const [authenticating, setAuthenticating] = useState(false);
+
   const navigate = useNavigate();
 
-  const login = async (formData) => {
+  const register = async (formData) => {
 
     try {
       // Replace the URL with your API endpoint
-      const response = await axios.post('http://localhost:8088/login', formData);
-      localStorage.setItem("username",formData.username);
-      navigate('/');
+      const response = await axios.post('http://localhost:8088/register', formData);
+
+      navigate('/login');
 
       // Handle success
       console.log('Data sent successfully:', response.data);
@@ -69,7 +71,7 @@ const Login = () => {
       justifyContent="center"
     >
       <Stack spacing={2} className="form">
-        <h2 className="title">Login</h2>
+        <h2 className="title">Register</h2>
         <TextField
           id="username"
           label="username"
@@ -77,6 +79,27 @@ const Login = () => {
           title="username"
           name="username"
           placeholder="username"
+          fullWidth
+          onChange={handleChange} 
+        />
+        <TextField
+          id="fullname"
+          label="fullname"
+          variant="outlined"
+          title="fullname"
+          name="fullname"
+          placeholder="fullname"
+          fullWidth
+          onChange={handleChange} 
+        />
+        
+        <TextField
+          id="email"
+          label="email"
+          variant="outlined"
+          title="email"
+          name="email"
+          placeholder="email"
           fullWidth
           onChange={handleChange} 
         />
@@ -91,23 +114,22 @@ const Login = () => {
           onChange={handleChange} 
         />
         {authenticating ? <Box sx={{ textAlign: 'center' }}> <CircularProgress /></Box> : <Button className="button" variant="contained" onClick={() => {
-          login(formData)
+          register(formData)
         }}>
-          LOGIN TO QKART
+          Register
         </Button>}
 
         <p className="secondary-action">
-          Don’t have an account?{" "}
-          <Link className="link" to="/register">
-            Register now
+          Have an account?{" "}
+          <Link className="link" to="/login">
+            Login now
           </Link>
         </p>
       </Stack>
     </Box>
 
 
-
   )
 }
 
-export default Login
+export default Register
