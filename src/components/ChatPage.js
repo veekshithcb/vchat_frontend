@@ -2,20 +2,12 @@ import "./ChatPage.css";
 import React, { useEffect, useState, useRef } from 'react';
 import Cookie from "universal-cookie";
 import { useNavigate, Link } from "react-router-dom";
-import { Box, Grid, Paper, Button } from "@mui/material";
-import { over } from 'stompjs';
-import SockJS from 'sockjs-client';
+import { Button, Grid, CircularProgress, Stack, Box, TextField } from "@mui/material";
+import { over } from "stompjs";
+import SockJS from "sockjs-client/dist/sockjs";
+
 import axios from "axios";
-
 import img from "../img/user_icon.png"
-
-
-
-
-
-
-
-
 
 function ChatPage() {
 
@@ -32,23 +24,25 @@ function ChatPage() {
     //   sameSite: "none",
     //   secure: true
     // });
-
-
-    let stompClient = null;
-    var cookie = new Cookie();
-
+    // var cookie = new Cookie();
     // const jwtToken = cookie.get("token");
-
     // if (!jwtToken) {
     //     navigate('/login111')
     // }
 
-    useEffect(() => {
+    const handleMessageChange = (e) => {
+        setUnsentMessage(e.target.value)
+    };
 
-        connect();
+
+
+    var stompClient = null;
+
+    useEffect(() => {
         getUsers();
         fetchSelectedUserChat();
-    }, []);
+        connect();
+    },[]);
 
 
     useEffect(() => {
@@ -64,16 +58,20 @@ function ChatPage() {
 
 
     function connect() {
-        let Sock = new SockJS('http://localhost:8088/ws');
-       
-        stompClient = over(Sock);
+        var sock = new SockJS("http://localhost:8088/ws");
+
+
+        stompClient = over(sock);
+
         stompClient.connect({}, onConnected, onError);
+
+
 
     }
 
     async function getUsers() {
         try {
-            const response = await fetch('http://localhost:8088/users'); // Replace with your API endpoint
+            const response = await fetch('http://localhost:8088/users');
             const data = await response.json();
             setUsers(data);
         } catch (error) {
@@ -84,11 +82,17 @@ function ChatPage() {
     function onConnected() {
         stompClient.subscribe(`/user/${username}/queue/messages`, onMessageReceived);
         stompClient.subscribe(`/user/public`, onMessageReceived);
+        console.log(stompClient)
+        makeUserOnline()
+    }
 
-        // stompClient.send("/app/user.addUser",
-        //     {},
-        //     JSON.stringify({ nickName: nickName, fullName: fullName, status: 'ONLINE' })
-        // );
+    function makeUserOnline() {
+
+        stompClient.send("/app/user.addUser",
+            {},
+            JSON.stringify({ "nickName": "veekshith", "fullName": "veekshith", "status": "ONLINE" })
+        );
+        console.log(stompClient)
 
     }
 
@@ -98,34 +102,58 @@ function ChatPage() {
         setSelectedUserMessages(userChat);
     }
 
-    function onError() {
-        return
-    }
+    const onError = (error) => {
+        console.log(error);
+    };
+
+
+
+
 
     function sendMessage() {
 
-        const chatMessage = {
-            senderId: username,
-            recipientId: selectedUserId,
-            content: "messageContent",
-            timestamp: new Date()
-        };
 
-        stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
+        console.log(stompClient)
+
+        // stompClient.send("/app/user.addUser",
+        //     {},
+        //     JSON.stringify( {"nickName":"veekshith","fullName":"veekshith","status":"ONLINE"})
+        // );
+        // console.log(stompClient)
+
+
+        // // const messageContent = messageInput.value.trim();
+
+        // const chatMessage = {
+        //     senderId: username,
+        //     recipientId: selectedUserId,
+        //     content: "fefef",
+        //     timestamp: new Date()
+        // };
+        // // stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
+
+        // stompClient.send("/app/chat",
+        //     {},
+        //     JSON.stringify("chatMessage")
+        // );
+        // console.log(stompClient)
+
+
         // try {
-            
+
         // } catch (error) {
         //     console.log("error in stomp")
         // }
-        
-        setUnsentMessage('')
+
+        // setUnsentMessage('')
     }
 
 
     async function onMessageReceived(payload) {
-        const message = JSON.parse(payload.body);
-        console.log(message)
-        setSelectedUserMessages(prevArray => [...prevArray, message]);
+        console.log("on msg recieved called")
+        // const message = JSON.parse(payload.body);
+        // console.log(message)
+        // setSelectedUserMessages(prevArray => [...prevArray, message]);
     }
 
     function displaySentMessage(message) {
@@ -144,7 +172,7 @@ function ChatPage() {
         try {
             stompClient.send("http://localhost:8088/app/user.disconnectUser",
                 {},
-                JSON.stringify({ username: username,  status: 'OFFLINE' })
+                JSON.stringify({ username: username, status: 'OFFLINE' })
             );
         } catch (error) {
         }
@@ -160,7 +188,6 @@ function ChatPage() {
 
 
         <Box class="chat-container " id="chat-page">
-
             <Grid class="users-list">
                 <Grid class="users-list-container">
                     <h2>Online Users</h2>
@@ -170,12 +197,8 @@ function ChatPage() {
                                 <div class="user-item">
                                     <img src={img} alt={user.username} ></img>
                                     <li id={"user.username"} onClick={(event) => {
-
                                         setSelectedUserId(user.username);
-
-
                                     }}   >{user.username}</li>
-
                                 </div>
                             )
                         }
@@ -192,7 +215,6 @@ function ChatPage() {
 
             <Grid class="chat-area">
                 <div ref={scrollRef} class="chat-area" id="chat-messages">
-
                     {selectedUserMessages.map((user) =>
                         user.senderId == username ? (
                             <div class="sender message" >
@@ -204,31 +226,26 @@ function ChatPage() {
                             </div>
                         )
                     )}
-
                 </div>
 
-                <form id="messageForm" className="messageForm" >
-                    <div className="message-input">
 
-
-                        <input
-                            type="text" value={unsentMessage} id="message" placeholder="Type your message... " onChange={(e) => {
-                                setUnsentMessage(e.target.value);
-                                console.log(unsentMessage)
-                            }}
-                        />
-                        <Button onClick={(e) => {
-                            sendMessage()
-                            // displaySentMessage(unsentMessage)
-                            // console.log(unsentMessage)
-                            // setUnsentMessage('')
-                        }}>
-
-                            Send
-                        </Button>
-                    
-                    </div>
-                </form>
+                <div class="message-input messageForm" id="messageForm" >
+                    <TextField
+                        id="message"
+                        label="message"
+                        variant="outlined"
+                        title="message"
+                        name="message"
+                        placeholder="Type your message... "
+                        fullWidth
+                        onChange={handleMessageChange}
+                    />
+                    <Button onClick={() => {
+                        sendMessage()
+                    }}>
+                        Send
+                    </Button>
+                </div>
             </Grid>
         </Box>
 
