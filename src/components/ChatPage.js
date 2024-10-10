@@ -104,7 +104,7 @@ function ChatPage() {
  
 
     function connect() {
-        var socket = new SockJS("http://127.0.0.1:8088/ws")
+        var socket = new SockJS("https://vchat-backend-ti7v.onrender.com/ws")
         // const socket = new SockJS('http://localhost:8080/ws?token=' + token);
         stompClient.current = Stomp.over(socket);
         stompClient.current.connect({}, onConnected, onError);
