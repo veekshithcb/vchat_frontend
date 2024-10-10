@@ -1,0 +1,36 @@
+/* General styles for the header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Logo section */
+  .logo-image {
+    width: 100px; /* Adjust the size of the logo */
+  }
+  
+  /* Navigation styles */
+  .nav {
+    display: flex;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-links li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .nav-links li a:hover {
+    color: #007bff; /* Add hover effect */
+  }
+  

@@ -1,0 +1,7 @@
+.results-list{
+    width:17rem;
+    background-color: #3498db;
+    display: flex;
+    flex-direction: column;
+    /* overflow-y: scroll; */
+}

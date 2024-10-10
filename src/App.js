@@ -4,8 +4,11 @@ import { Link, Route, Routes } from "react-router-dom";
 
 import Login from "./components/Login";
 import Register from "./components/Register";
+import Search from "./components/Search";
 import ChatPage from "./components/ChatPage";
-import Vee from "./components/Vee";
+
+
+import { GoogleOAuthProvider } from "@react-oauth/google"
 
 
 
@@ -16,10 +19,11 @@ function App() {
         <Route path="/" element={<ChatPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/Register" element={<Register />} />
-        <Route path="/vee" element={<Vee />} />
+        <Route path="/Search" element={<Search />} />
+
       </Routes>
     </div>
-  );
+  )
 }
 
 export default App;

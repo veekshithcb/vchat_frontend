@@ -1,0 +1,16 @@
+.search-result{
+    padding:  10px 20px;
+
+    background-color: #3498db;
+
+    border: 1px solid rgba(250, 250, 250, 0.986);
+
+    border-radius: 10px;
+
+}
+
+.search-result:hover{
+    cursor:pointer
+
+
+}
