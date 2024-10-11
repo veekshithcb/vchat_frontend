@@ -39,9 +39,9 @@ const Login = () => {
     try {
       
       // Replace the URL with your API endpoint
-      const response = await axios.post('https://vchat-backend-ti7v.onrender.com/login', formData, {}, { withCredentials: true });
+      const response = await axios.post('https://vchat.backend.projects.veekshith.dev/login', formData, {}, { withCredentials: true });
 
-      // const response = await  axios.post('https://vchat-backend-ti7v.onrender.com/login', {formData}, {
+      // const response = await  axios.post('https://vchat.backend.projects.veekshith.dev/login', {formData}, {
       //   withCredentials: true, // This allows cookies to be sent and received
       // })
 
@@ -75,11 +75,11 @@ const Login = () => {
 
 
   let googleLogIn = () => {
-    window.location.href = 'https://vchat-backend-ti7v.onrender.com/oauth2/authorization/google'
+    window.location.href = 'https://vchat.backend.projects.veekshith.dev/oauth2/authorization/google'
   }
 
   let msLogIn = () => {
-    window.location.href = 'https://vchat-backend-ti7v.onrender.com/oauth2/authorization/microsoft'
+    window.location.href = 'https://vchat.backend.projects.veekshith.dev/oauth2/authorization/microsoft'
   }
 
 

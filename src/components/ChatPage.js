@@ -21,7 +21,7 @@ import axios from "axios";
 function ChatPage() {
 
     const cookies = new Cookies(null, { path: '/' });
-    const token = cookies.get('token'); // Get JWT token
+    const token = cookies.get("token"); // Get JWT token
     const jwtDecoded = jwtDecode(token);
 
     const navigate = useNavigate();
@@ -104,7 +104,7 @@ function ChatPage() {
  
 
     function connect() {
-        var socket = new SockJS("https://vchat-backend-ti7v.onrender.com/ws")
+        var socket = new SockJS("https://vchat.backend.projects.veekshith.dev/ws")
         // const socket = new SockJS('http://localhost:8080/ws?token=' + token);
         stompClient.current = Stomp.over(socket);
         stompClient.current.connect({}, onConnected, onError);
@@ -150,7 +150,7 @@ function ChatPage() {
 
     async function getUsers() {
         // try {
-        //     const response = await fetch('https://vchat-backend-ti7v.onrender.com/users', {
+        //     const response = await fetch('https://vchat.backend.projects.veekshith.dev/users', {
         //         method: 'GET',
         //         headers: {
         //             'Authorization': `Bearer ${token}` // Add the token to the Authorization header
@@ -184,7 +184,7 @@ function ChatPage() {
 
     async function fetchSelectedUserChat() {
         try {
-            const userChatResponse = await fetch(`https://vchat-backend-ti7v.onrender.com/messages/${username}/${selectedUserId}`, {
+            const userChatResponse = await fetch(`https://vchat.backend.projects.veekshith.dev/messages/${username}/${selectedUserId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}` // Add the token to the Authorization header
@@ -192,7 +192,7 @@ function ChatPage() {
             });
             const userChat = await userChatResponse.json();
             setSelectedUserMessages(userChat);
-            // const userChatResponse = await fetch(`https://vchat-backend-ti7v.onrender.com/messages/${username}/${selectedUserId}`);
+            // const userChatResponse = await fetch(`https://vchat.backend.projects.veekshith.dev/messages/${username}/${selectedUserId}`);
             // const userChat = await userChatResponse.json();
             // setSelectedUserMessages(userChat);
         } catch (error) {
@@ -258,7 +258,7 @@ function ChatPage() {
 
     async function onLogout() {
         try {
-            stompClient.current.send("https://vchat-backend-ti7v.onrender.com/app/user.disconnectUser",
+            stompClient.current.send("https://vchat.backend.projects.veekshith.dev/app/user.disconnectUser",
                 {},
                 JSON.stringify({ username: username, status: 'OFFLINE' })
             );

@@ -34,7 +34,7 @@ const Register = () => {
 
     try {
       // Replace the URL with your API endpoint
-      const response = await axios.post('https://vchat-backend-ti7v.onrender.com/register', formData);
+      const response = await axios.post('https://vchat.backend.projects.veekshith.dev/register', formData);
 
       navigate('/login');
 
@@ -49,7 +49,7 @@ const Register = () => {
   }
 
   let googleLogIn = () => {
-    window.location.href = 'https://vchat-backend-ti7v.onrender.com/oauth2/authorization/google'
+    window.location.href = 'https://vchat.backend.projects.veekshith.dev/oauth2/authorization/google'
   }
 
 
