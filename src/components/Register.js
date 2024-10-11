@@ -7,7 +7,7 @@ import "./Register.css";
 import { Button, CircularProgress, Stack, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import Cookie from "universal-cookie";
-
+import config from "./backendConfig.json";
 
 
 const Register = () => {
@@ -34,7 +34,7 @@ const Register = () => {
 
     try {
       // Replace the URL with your API endpoint
-      const response = await axios.post('https://vchat.backend.projects.veekshith.dev/register', formData);
+      const response = await axios.post(`${config.domain}${config.port}/register`, formData);
 
       navigate('/login');
 
@@ -49,7 +49,7 @@ const Register = () => {
   }
 
   let googleLogIn = () => {
-    window.location.href = 'https://vchat.backend.projects.veekshith.dev/oauth2/authorization/google'
+    window.location.href = `${config.domain}${config.port}/oauth2/authorization/google`
   }
 
 

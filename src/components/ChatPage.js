@@ -13,6 +13,9 @@ import img from "../img/user_icon.png"
 import Header from "./Header";
 import axios from "axios";
 
+import config from "./backendConfig.json";
+
+
 // import axios from 'axios';
 
 // // Set the Authorization token globally
@@ -21,20 +24,20 @@ import axios from "axios";
 function ChatPage() {
 
     const cookies = new Cookies(null, { path: '/' });
+    const token = cookies.get('token'); // Get JWT token
 
-    const navigate = useNavigate();
-
-    const token = cookies.get("token");
-
-        if (token) {
-            console.log("Token exists:", token);
-            // Proceed with token-based logic
-        } else {
-
-            window.location.href = "/login"; 
-        }
+    if (token) {
+        console.log("Token exists:", token);
+        // Proceed with token-based logic
+    } else {
+        console.warn("Token is missing or null");
+        // Handle missing token (e.g., redirect to login or show an alert)
+        window.location.href = "/login";  // Example: redirect to login
+    }
 
     const jwtDecoded = jwtDecode(token);
+
+    const navigate = useNavigate();
     const [username, setUsername] = useState(jwtDecoded.sub);
     const [selectedUserId, setSelectedUserId] = useState(username);
     let selectedUserIdRef = useRef(username);
@@ -57,7 +60,6 @@ function ChatPage() {
     };
 
     useEffect(() => {
-        checkAuthentication();
         getUsers();
         connect();
 
@@ -92,32 +94,6 @@ function ChatPage() {
     //     console.log(newMessage  +"new msg from")
     // };
 
-    let checkAuthentication = () => {
-
-
-        const token = cookies.get("token");
-
-        if (token) {
-            console.log("Token exists:", token);
-            // Proceed with token-based logic
-        } else {
-            console.warn("Token is missing or null");
-            // Handle missing token (e.g., redirect to login or show an alert)
-            window.location.href = "/login";  // Example: redirect to login
-        }
-
-
-
-
-        const currentTime = Date.now() / 1000;  // Current time in seconds
-
-        const istokenExpired = jwtDecoded.exp < currentTime
-
-        if (!token || token == null || token == undefined || istokenExpired) {
-            navigate('/login');
-        }
-    }
-
     let updateUserMessages = (sender) => {
         setNewMessageFromUser(prevChatUsers => {
             if (!prevChatUsers.includes(sender) && sender != selectedUserIdRef.current) {
@@ -141,7 +117,7 @@ function ChatPage() {
 
 
     function connect() {
-        var socket = new SockJS("https://vchat.backend.projects.veekshith.dev/ws")
+        var socket = new SockJS(   `${config.domain}${config.port}/ws`)
         // const socket = new SockJS('http://localhost:8080/ws?token=' + token);
         stompClient.current = Stomp.over(socket);
         stompClient.current.connect({}, onConnected, onError);
@@ -187,7 +163,7 @@ function ChatPage() {
 
     async function getUsers() {
         // try {
-        //     const response = await fetch('https://vchat.backend.projects.veekshith.dev/users', {
+        //     const response = await fetch('http://localhost:8088/users', {
         //         method: 'GET',
         //         headers: {
         //             'Authorization': `Bearer ${token}` // Add the token to the Authorization header
@@ -221,7 +197,7 @@ function ChatPage() {
 
     async function fetchSelectedUserChat() {
         try {
-            const userChatResponse = await fetch(`https://vchat.backend.projects.veekshith.dev/messages/${username}/${selectedUserId}`, {
+            const userChatResponse = await fetch(`${config.domain}${config.port}/messages/${username}/${selectedUserId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}` // Add the token to the Authorization header
@@ -229,7 +205,7 @@ function ChatPage() {
             });
             const userChat = await userChatResponse.json();
             setSelectedUserMessages(userChat);
-            // const userChatResponse = await fetch(`https://vchat.backend.projects.veekshith.dev/messages/${username}/${selectedUserId}`);
+            // const userChatResponse = await fetch(`http://localhost:8088/messages/${username}/${selectedUserId}`);
             // const userChat = await userChatResponse.json();
             // setSelectedUserMessages(userChat);
         } catch (error) {
@@ -295,21 +271,39 @@ function ChatPage() {
 
     async function onLogout() {
         try {
-            stompClient.current.send("https://vchat.backend.projects.veekshith.dev/app/user.disconnectUser",
+            stompClient.current.send(`${config.domain}${config.port}/app/user.disconnectUser`,
                 {},
                 JSON.stringify({ username: username, status: 'OFFLINE' })
             );
             localStorage.clear();
+            cookies.remove('token', { path: '/' });
+            cookies.remove('access_token', { path: '/' });
+            cookies.remove('refresh_token', { path: '/' });
+            cookies.remove('id_token', { path: '/' });
 
+
+            cookies.remove('ACCOUNT_CHOOSER', { path: 'accounts.google.com/' });
+            cookies.remove('JSESSIONID', { path: '/' });
+            cookies.remove('sid', { path: '/' });
+            cookies.remove('ssid', { path: '/' });
+
+            cookies.remove('ACCOUNT_CHOOSER', { path: '/' });
+            cookies.remove('JSESSIONID', { path: '/' });
+            cookies.remove('sid', { path: '/' });
+            cookies.remove('ssid', { path: '/' });
+
+            
+
+            // If your OAuth provider uses session cookies, remove them too
+            cookies.remove('JSESSIONID', { path: '/' });
         } catch (error) {
         }
-        localStorage.clear();
-        cookies.remove('token', { path: '/' });
 
+        localStorage.clear();
         navigate('/login');
     }
 
-    if (token == "") {
+    if (!token) {
         return navigate('/login');
     }
 

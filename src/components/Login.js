@@ -11,6 +11,7 @@ import jwt from "jwt-decode";
 import Google from "../img/web_neutral_sq_na@3x.png"
 import Cookies from "universal-cookie";
 
+import config from "./backendConfig.json";
 
 
 const Login = () => {
@@ -37,13 +38,8 @@ const Login = () => {
   const login = async (formData) => {
 
     try {
-      
-      // Replace the URL with your API endpoint
-      const response = await axios.post('https://vchat.backend.projects.veekshith.dev/login', formData, {}, { withCredentials: true });
 
-      // const response = await  axios.post('https://vchat.backend.projects.veekshith.dev/login', {formData}, {
-      //   withCredentials: true, // This allows cookies to be sent and received
-      // })
+      const response = await axios.post(`${config.domain}${config.port}/login`, formData, {}, { withCredentials: true });
 
       cookies.set('token', response.data);
       console.log(cookies.get('token')); // Pacman
@@ -75,12 +71,10 @@ const Login = () => {
 
 
   let googleLogIn = () => {
-    window.location.href = 'https://vchat.backend.projects.veekshith.dev/oauth2/authorization/google'
+    window.location.href = `${config.domain}${config.port}/oauth2/authorization/google`
   }
 
-  let msLogIn = () => {
-    window.location.href = 'https://vchat.backend.projects.veekshith.dev/oauth2/authorization/microsoft'
-  }
+
 
 
   return (
