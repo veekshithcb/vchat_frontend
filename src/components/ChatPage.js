@@ -21,10 +21,20 @@ import axios from "axios";
 function ChatPage() {
 
     const cookies = new Cookies(null, { path: '/' });
-    const token = cookies.get("token"); // Get JWT token
-    const jwtDecoded = jwtDecode(token);
 
     const navigate = useNavigate();
+
+    const token = cookies.get("token");
+
+        if (token) {
+            console.log("Token exists:", token);
+            // Proceed with token-based logic
+        } else {
+
+            window.location.href = "/login"; 
+        }
+
+    const jwtDecoded = jwtDecode(token);
     const [username, setUsername] = useState(jwtDecoded.sub);
     const [selectedUserId, setSelectedUserId] = useState(username);
     let selectedUserIdRef = useRef(username);
@@ -47,6 +57,7 @@ function ChatPage() {
     };
 
     useEffect(() => {
+        checkAuthentication();
         getUsers();
         connect();
 
@@ -81,9 +92,35 @@ function ChatPage() {
     //     console.log(newMessage  +"new msg from")
     // };
 
+    let checkAuthentication = () => {
+
+
+        const token = cookies.get("token");
+
+        if (token) {
+            console.log("Token exists:", token);
+            // Proceed with token-based logic
+        } else {
+            console.warn("Token is missing or null");
+            // Handle missing token (e.g., redirect to login or show an alert)
+            window.location.href = "/login";  // Example: redirect to login
+        }
+
+
+
+
+        const currentTime = Date.now() / 1000;  // Current time in seconds
+
+        const istokenExpired = jwtDecoded.exp < currentTime
+
+        if (!token || token == null || token == undefined || istokenExpired) {
+            navigate('/login');
+        }
+    }
+
     let updateUserMessages = (sender) => {
         setNewMessageFromUser(prevChatUsers => {
-            if (!prevChatUsers.includes(sender) && sender!=selectedUserIdRef.current) {
+            if (!prevChatUsers.includes(sender) && sender != selectedUserIdRef.current) {
                 return [...prevChatUsers, sender];  // Return a new array with the added user
             }
             return prevChatUsers;  // If already exists, return the previous state
@@ -101,7 +138,7 @@ function ChatPage() {
         selectedUserIdRef.current = newId;
     };
 
- 
+
 
     function connect() {
         var socket = new SockJS("https://vchat.backend.projects.veekshith.dev/ws")
@@ -226,7 +263,7 @@ function ChatPage() {
 
     let updateChatUserOnMsg = (sender) => {
         setChatUsers(prevChatUsers => {
-            if (!prevChatUsers.includes(sender) && sender!=selectedUserId) {
+            if (!prevChatUsers.includes(sender) && sender != selectedUserId) {
                 return [...prevChatUsers, sender];  // Return a new array with the added user
             }
             return prevChatUsers;  // If already exists, return the previous state
@@ -263,13 +300,16 @@ function ChatPage() {
                 JSON.stringify({ username: username, status: 'OFFLINE' })
             );
             localStorage.clear();
+
         } catch (error) {
         }
         localStorage.clear();
+        cookies.remove('token', { path: '/' });
+
         navigate('/login');
     }
 
-    if (!token) {
+    if (token == "") {
         return navigate('/login');
     }
 
@@ -291,13 +331,13 @@ function ChatPage() {
                                             updateSelectedUserId(user);
                                             console.log(selectedUserId); // log user.username directly instead of state
 
-                                            removeStringFromArray( newMessageFromUser , user);
-                                         
+                                            removeStringFromArray(newMessageFromUser, user);
+
                                         }}
                                     >
                                         {user} {user == username ? "(You)" : ""}
                                     </li>
-                                    <span className={newMessageFromUser.includes(user)  ? 'green-dot' : ''}> </span>
+                                    <span className={newMessageFromUser.includes(user) ? 'green-dot' : ''}> </span>
                                 </div>
 
                                 </>
