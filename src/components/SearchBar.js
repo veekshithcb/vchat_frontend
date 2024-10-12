@@ -11,7 +11,7 @@ const SearchBar = ({setSearchUsers}) => {
  const [input , setInput] = useState("")
 
  const fetchData=(value)=>{
-    fetch(`http://localhost:8088/user?name=${value}`)
+    fetch(`${config.domain}${config.port}/user?name=${value}`)
     .then((response) =>response.json())
     .then((json) =>{
       setSearchUsers(json);
