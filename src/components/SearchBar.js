@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useState } from 'react';
 import "./SearchBar.css";
+import config from "./backendConfig.json";
 
 import { FaSearch } from "react-icons/fa";
 
