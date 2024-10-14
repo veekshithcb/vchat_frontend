@@ -18,24 +18,23 @@ import config from "./backendConfig.json";
 
 // import axios from 'axios';
 
-// // Set the Authorization token globally
-// axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+// // Set the Authorization token_vchat globally
+// axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token_vchat')}`;
 
 function ChatPage() {
 
     const cookies = new Cookies(null, { path: '/' });
-    const token = cookies.get('token'); // Get JWT token
+    const token_vchat = cookies.get('token_vchat'); // Get JWT token_vchat
 
-    if (token) {
-        console.log("Token exists:", token);
-        // Proceed with token-based logic
+    if (token_vchat) {
+        console.log("token_vchat exists:", token_vchat);
+        // Proceed with token_vchat-based logic
     } else {
-        console.warn("Token is missing or null");
-        // Handle missing token (e.g., redirect to login or show an alert)
+        console.warn("token_vchat is missing or null");
         window.location.href = "/login";  // Example: redirect to login
     }
 
-    const jwtDecoded = jwtDecode(token);
+    const jwtDecoded = jwtDecode(token_vchat);
 
     const navigate = useNavigate();
     const [username, setUsername] = useState(jwtDecoded.sub);
@@ -118,10 +117,10 @@ function ChatPage() {
 
     function connect() {
         var socket = new SockJS(   `${config.domain}${config.port}/ws`)
-        // const socket = new SockJS('http://localhost:8080/ws?token=' + token);
+        // const socket = new SockJS('http://localhost:8080/ws?token_vchat=' + token_vchat);
         stompClient.current = Stomp.over(socket);
         stompClient.current.connect({}, onConnected, onError);
-        // stompClient.current.connect({ Authorization: `Bearer ${token}` }, onConnected, onError);
+        // stompClient.current.connect({ Authorization: `Bearer ${token_vchat}` }, onConnected, onError);
     }
 
     function sendMessage() {
@@ -131,7 +130,7 @@ function ChatPage() {
             content: unsentMessage,
             timestamp: new Date()
         };
-        stompClient.current.send("/app/chat", { Authorization: `Bearer ${token}` }, JSON.stringify(chatMessage));
+        stompClient.current.send("/app/chat", { Authorization: `Bearer ${token_vchat}` }, JSON.stringify(chatMessage));
     }
 
 
@@ -166,7 +165,7 @@ function ChatPage() {
         //     const response = await fetch('http://localhost:8088/users', {
         //         method: 'GET',
         //         headers: {
-        //             'Authorization': `Bearer ${token}` // Add the token to the Authorization header
+        //             'Authorization': `Bearer ${token_vchat}` // Add the token_vchat to the Authorization header
         //         }
         //     });
 
@@ -200,7 +199,7 @@ function ChatPage() {
             const userChatResponse = await fetch(`${config.domain}${config.port}/messages/${username}/${selectedUserId}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}` // Add the token to the Authorization header
+                    'Authorization': `Bearer ${token_vchat}` // Add the token_vchat to the Authorization header
                 }
             });
             const userChat = await userChatResponse.json();
@@ -276,10 +275,11 @@ function ChatPage() {
                 JSON.stringify({ username: username, status: 'OFFLINE' })
             );
             localStorage.clear();
-            cookies.remove('token', { path: '/' });
+            cookies.remove('token_vchat', { path: '/' });
+            cookies.remove('token_vchat', { path: '/', domain: 'veekshith.dev' });
             cookies.remove('access_token', { path: '/' });
             cookies.remove('refresh_token', { path: '/' });
-            cookies.remove('id_token', { path: '/' });
+            cookies.remove('id_tokent', { path: '/' });
 
 
             cookies.remove('ACCOUNT_CHOOSER', { path: 'accounts.google.com/' });
@@ -303,7 +303,7 @@ function ChatPage() {
         navigate('/login');
     }
 
-    if (!token) {
+    if (!token_vchat) {
         return navigate('/login');
     }
 

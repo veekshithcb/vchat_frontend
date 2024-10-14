@@ -41,8 +41,7 @@ const Login = () => {
 
       const response = await axios.post(`${config.domain}${config.port}/login`, formData, {}, { withCredentials: true });
 
-      cookies.set('token', response.data);
-      console.log(cookies.get('token')); // Pacman
+      cookies.set('token_vchat', response.data);
       localStorage.setItem("username", formData.username);
       navigate('/');
 
@@ -71,6 +70,7 @@ const Login = () => {
 
 
   let googleLogIn = () => {
+    // window.location.href = `${config.domain}${config.port}/oauth2/authorization/google`
     window.location.href = `${config.domain}${config.port}/oauth2/authorization/google`
   }
 

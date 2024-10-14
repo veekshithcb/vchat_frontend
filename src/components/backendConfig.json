@@ -1,5 +1,5 @@
 {
 
-    "domain" :"https://vchat.backend.projects.veekshith.dev",
-    "port":""
+    "domain" :"http://localhost",
+    "port":":8088"
 }
